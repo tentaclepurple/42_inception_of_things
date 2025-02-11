@@ -1,5 +1,7 @@
 #!/bin/bash
 
+#wget https://raw.githubusercontent.com/tentaclepurple/42_inception_of_things/main/setup_vm.sh
+
 echo "Installing requirements for Inception of Things (Debian version)..."
 
 # Update system
