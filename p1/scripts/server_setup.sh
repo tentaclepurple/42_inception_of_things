@@ -4,11 +4,18 @@
 apt-get update
 apt-get upgrade -y
 
+apt-get install -y curl
+
 # InstalL k3s in server mode
 curl -sfL https://get.k3s.io | sh -
 
+mkdir -p /vagrant/confs
+
 # save token for worker
 sudo cat /var/lib/rancher/k3s/server/node-token > /vagrant/confs/node-token
+
+ls -la /vagrant/confs
+cat /vagrant/confs/node-token
 
 # Install kubectl (already comes with k3s but just in case)
 if ! command -v kubectl &> /dev/null; then

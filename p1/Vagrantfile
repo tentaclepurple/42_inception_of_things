@@ -1,10 +1,21 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
+USER = ENV['USER']
+VM_PATH = "/home/wopr/Coding/iot/VM"
+
+puts "================================================"
+puts "Configuring Vagrant:"
+puts "User: #{USER}"
+puts "Folder VM: #{VM_PATH}"
+puts "================================================"
+
+
 Vagrant.configure("2") do |config|
     # Common conf for both VMs
     config.vm.box = "debian/bullseye64"
-  
+    config.vm.synced_folder ".", "/vagrant", mount_options: ["dmode=775", "fmode=664"]
+
     # 1st (Server)
     config.vm.define "imonteroS" do |server|
       server.vm.hostname = "imonteroS"
@@ -14,7 +25,10 @@ Vagrant.configure("2") do |config|
         vb.name = "imonteroS"
         vb.memory = "512"
         vb.cpus = 1
+        #vb.gui = true
         vb.customize ["modifyvm", :id, "--nested-hw-virt", "on"]
+        vb.customize ["setproperty", "machinefolder", VM_PATH]
+
       end
   
       # Provision for server
@@ -30,7 +44,10 @@ Vagrant.configure("2") do |config|
         vb.name = "imonteroSW"
         vb.memory = "512"
         vb.cpus = 1
+        #vb.gui = true
         vb.customize ["modifyvm", :id, "--nested-hw-virt", "on"]
+        vb.customize ["setproperty", "machinefolder", VM_PATH]
+
       end
   
       # Provision for worker

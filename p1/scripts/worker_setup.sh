@@ -3,6 +3,8 @@
 # Update sys
 apt-get update
 apt-get upgrade -y
+apt-get install -y curl
+
 
 # Wait until token is available
 while [ ! -f /vagrant/confs/node-token ]; do
