@@ -1,56 +1,22 @@
-# -*- mode: ruby -*-
-# vi: set ft=ruby :
-
-USER = ENV['USER']
-VM_PATH = "/home/wopr/Coding/iot/VM"
-
-puts "================================================"
-puts "Configuring Vagrant:"
-puts "User: #{USER}"
-puts "Folder VM: #{VM_PATH}"
-puts "================================================"
-
-
 Vagrant.configure("2") do |config|
-    # Common conf for both VMs
-    config.vm.box = "debian/bullseye64"
-    config.vm.synced_folder ".", "/vagrant", mount_options: ["dmode=775", "fmode=664"]
-
-    # 1st (Server)
+    config.vm.box = "generic/alpine317"
+  
+    config.vm.provider "virtualbox" do |virtualbox|
+      virtualbox.memory = 1024
+      virtualbox.cpus = 1
+    end
+  
     config.vm.define "imonteroS" do |server|
       server.vm.hostname = "imonteroS"
       server.vm.network "private_network", ip: "192.168.56.110"
-      
-      server.vm.provider "virtualbox" do |vb|
-        vb.name = "imonteroS"
-        vb.memory = "512"
-        vb.cpus = 1
-        #vb.gui = true
-        vb.customize ["modifyvm", :id, "--nested-hw-virt", "on"]
-        vb.customize ["setproperty", "machinefolder", VM_PATH]
-
-      end
-  
-      # Provision for server
-      server.vm.provision "shell", path: "scripts/server_setup.sh"
+      server.vm.synced_folder ".", "/vagrant"
+      server.vm.provision "shell", privileged: true, path: "config/server.sh", args: ["192.168.56.110"]
     end
   
-    # 2nd vm (Worker)
     config.vm.define "imonteroSW" do |worker|
       worker.vm.hostname = "imonteroSW"
       worker.vm.network "private_network", ip: "192.168.56.111"
-      
-      worker.vm.provider "virtualbox" do |vb|
-        vb.name = "imonteroSW"
-        vb.memory = "512"
-        vb.cpus = 1
-        #vb.gui = true
-        vb.customize ["modifyvm", :id, "--nested-hw-virt", "on"]
-        vb.customize ["setproperty", "machinefolder", VM_PATH]
-
-      end
-  
-      # Provision for worker
-      worker.vm.provision "shell", path: "scripts/worker_setup.sh"
+      worker.vm.synced_folder ".", "/vagrant"
+      worker.vm.provision "shell", privileged: true, path: "config/worker.sh", args: ["192.168.56.110", "192.168.56.111"]
     end
   end
