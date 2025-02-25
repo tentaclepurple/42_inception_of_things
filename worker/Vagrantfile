@@ -1,0 +1,33 @@
+# Configuración de directorios
+USER = ENV['USER']
+VM_PATH = "/sgoinfre/students/#{USER}/VirtualBox VMs"
+
+puts "================================================"
+puts "Configurando Vagrant:"
+puts "Usuario: #{USER}"
+puts "Directorio VM: #{VM_PATH}"
+puts "================================================"
+
+Vagrant.configure("2") do |config|
+  # Usando Alpine Linux en lugar de Ubuntu
+  config.vm.box = "generic/debian12"
+  config.vm.synced_folder "../.", "/vagrant", mount_options: ["dmode=775", "fmode=664"], type: "virtualbox"
+  config.vm.network "forwarded_port", guest: 22, host: 2223
+  config.vm.network "private_network", ip: "192.168.56.111", virtualbox__intnet: true, name: "mynetwork"
+  # Configuración de VirtualBox
+  config.vm.provider "virtualbox" do |vb|
+    # Configuración mínima para SSH
+    vb.memory = "512"
+    vb.cpus = 1
+    vb.name = "#{USER}SW"
+    vb.gui = true
+    # Directorio de la máquina
+    vb.customize ["setproperty", "machinefolder", VM_PATH]
+    # Configuración específica de la red
+    vb.customize ["modifyvm", :id, "--nic2", "intnet"]
+    vb.customize ["modifyvm", :id, "--intnet2", "mynetwork"]
+  end
+  # Configuración SSH
+  config.ssh.insert_key = true
+  config.ssh.forward_agent = true
+end
