@@ -7,4 +7,4 @@ sleep 18
 kubectl apply -n kube-system -f /vagrant/apps/app-1.yml --validate=false
 kubectl apply -n kube-system -f /vagrant/apps/app-2.yml --validate=false
 kubectl apply -n kube-system -f /vagrant/apps/app-3.yml --validate=false
-kubectl apply -n kube-system -f /vagrant/apps/ingress.yaml --validate=false
+kubectl apply -n kube-system -f /vagrant/apps/ingress.yml --validate=false
