@@ -1,0 +1,25 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+    # Usamos Debian 11 (Bullseye) como base
+    config.vm.box = "debian/bullseye64"
+    
+    # Configuración del nombre de la máquina
+    config.vm.hostname = "k3d-argocd"
+    
+    # Configuración de red con IP específica
+    config.vm.network "private_network", ip: "192.168.56.110"
+    
+    # Puertos para acceder a tus servicios más adelante
+    config.vm.network "forwarded_port", guest: 8080, host: 8080
+    config.vm.network "forwarded_port", guest: 8888, host: 8888
+    config.vm.network "forwarded_port", guest: 80, host: 8081
+    
+    # Configuración de recursos para la VM
+    config.vm.provider "virtualbox" do |vb|
+      vb.name = "k3d-argocd"
+      vb.memory = 2048  # 2GB RAM debería ser suficiente para Debian + K3d
+      vb.cpus = 2
+    end
+  end
