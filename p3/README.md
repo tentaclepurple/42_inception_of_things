@@ -13,7 +13,7 @@ Go to argo interface
     - new app
 
 
-    S- General:
+    - General:
 
     Application Name: my-app (or whatever)
     Project: default
