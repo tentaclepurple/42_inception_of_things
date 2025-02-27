@@ -44,3 +44,5 @@ and access in browser:
 but since we have ingress, we can use just:
 
     http://192.168.56.110
+
+k3d
