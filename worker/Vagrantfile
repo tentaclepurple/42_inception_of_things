@@ -10,14 +10,14 @@ puts "================================================"
 
 Vagrant.configure("2") do |config|
   # Usando Alpine Linux en lugar de Ubuntu
-  config.vm.box = "generic/debian12"
+  config.vm.box = "generic/alpine317"
   config.vm.synced_folder "../.", "/vagrant", mount_options: ["dmode=775", "fmode=664"], type: "virtualbox"
   config.vm.network "forwarded_port", guest: 22, host: 2223
   config.vm.network "private_network", ip: "192.168.56.111", virtualbox__intnet: true, name: "mynetwork"
   # Configuración de VirtualBox
   config.vm.provider "virtualbox" do |vb|
     # Configuración mínima para SSH
-    vb.memory = "512"
+    vb.memory = 1024
     vb.cpus = 1
     vb.name = "#{USER}SW"
     vb.gui = true

@@ -15,6 +15,8 @@ sudo ip addr add 192.168.56.111/24 dev eth1 #worker
 
 kubeconfig
 
-sudo systemctl status k3s
+sudo systemctl status k3s #alpine: sudo rc-service k3s status
 sudo systemctl status k3s-agent
 sudo chmod 644 /etc/rancher/k3s/k3s.yaml
+
+sudo ip addr add 192.168.56.110/24 dev eth1

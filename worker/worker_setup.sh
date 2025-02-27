@@ -1,26 +1,10 @@
 #!/bin/bash
 
-# Update sys
-sudo apt-get update
-sudo apt-get upgrade -y
-sudo apt-get install -y curl
-sudo apt install -y iptables iptables-persistent
-sudo apt install -y ip6tables ip6tables-persistent
+sudo ip link set eth1 up
 sudo ip addr add 192.168.56.111/24 dev eth1
+sudo apk add curl
 
-# Wait until token is available
-while [ ! -f /vagrant/confs/node-token ]; do
-    echo "Waiting for server token..."
-    sleep 5
-done
+curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="agent --server https://192.168.56.110:6443 --token-file /vagrant/node-token --node-ip=192.168.56.111" sh -s -
 
-# Get token from server
-NODE_TOKEN=$(cat /vagrant/confs/node-token)
-
-# Install k3s in agent mode
-curl -sfL https://get.k3s.io | K3S_URL=https://192.168.56.110:6443 K3S_TOKEN=${NODE_TOKEN} sh -
-
-# Config no password ssh
-if [ ! -f /home/vagrant/.ssh/id_rsa ]; then
-    sudo -u vagrant ssh-keygen -t rsa -N "" -f /home/vagrant/.ssh/id_rsa
-fi
+echo "export KUBECONFIG=/vagrant/k3s.yaml" >> ~/.bashrc
+export KUBECONFIG=/vagrant/k3s.yaml

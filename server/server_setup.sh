@@ -1,30 +1,13 @@
 #!/bin/bash
 
-# update
-sudo apt-get update
-sudo apt-get upgrade -y
-sudo apt-get install -y curl
+sudo ip link set eth1 up
 sudo ip addr add 192.168.56.110/24 dev eth1
+sudo apk add curl
+curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="--write-kubeconfig-mode=644 --node-ip 192.168.56.110 --bind-address=192.168.56.110" sh -s -
 
-# InstalL k3s in server mode
-curl -sfL https://get.k3s.io | sh -
+sleep 18
 
-mkdir -p /vagrant/confs
-
-# save token for worker
-sudo cat /var/lib/rancher/k3s/server/node-token > /vagrant/confs/node-token
-
-# ls -la /vagrant/confs
-# cat /vagrant/confs/node-token
-
-# Install kubectl (already comes with k3s but just in case)
-if ! command -v kubectl &> /dev/null; then
-    curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-    chmod +x kubectl
-    mv kubectl /usr/local/bin/
-fi
-
-# Config no password ssh
-if [ ! -f /home/vagrant/.ssh/id_rsa ]; then
-    sudo -u vagrant ssh-keygen -t rsa -N "" -f /home/vagrant/.ssh/id_rsa
-fi
+sudo cp /var/lib/rancher/k3s/server/node-token /vagrant/.
+sudo cp /etc/rancher/k3s/k3s.yaml /vagrant/k3s.yaml
+sudo chmod 644 /vagrant/k3s.yaml
+sudo sed -i 's/127.0.0.1/192.168.56.110/g' /vagrant/k3s.yaml
