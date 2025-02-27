@@ -2,3 +2,4 @@
 .vagrant/
 k3s.yaml
 node-token
+VM
