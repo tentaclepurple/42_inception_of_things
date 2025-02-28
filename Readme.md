@@ -20,3 +20,6 @@ sudo systemctl status k3s-agent
 sudo chmod 644 /etc/rancher/k3s/k3s.yaml
 
 sudo ip addr add 192.168.56.110/24 dev eth1
+
+# Verifica si el clúster K3d existe y está corriendo
+k3d cluster list
