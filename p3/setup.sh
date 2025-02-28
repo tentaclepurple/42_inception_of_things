@@ -1,4 +1,3 @@
-
 k3d cluster create argocd-cluster --api-port 6443 -p "8888:8888@loadbalancer" -p "80:80@loadbalancer" -p "443:443@loadbalancer"
 
 mkdir -p $HOME/.kube
