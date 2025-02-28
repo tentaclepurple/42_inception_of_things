@@ -28,7 +28,7 @@ Go to argo interface
 
     - Destination:
 
-    Cluster URL: https://kubernetes.default.svc
+    Cluster URL: 
     Namespace: dev
 
 
