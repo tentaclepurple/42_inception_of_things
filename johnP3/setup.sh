@@ -3,7 +3,6 @@ k3d cluster create argocd-cluster --api-port 6443 -p "8888:8888@loadbalancer" -p
 mkdir -p $HOME/.kube
 k3d kubeconfig get argocd-cluster > $HOME/.kube/config
 chmod 600 $HOME/.kube/config
-export KUBECONFIG=$HOME/.kube/config
 
 kubectl create namespace argocd
 kubectl create namespace dev
