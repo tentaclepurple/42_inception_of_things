@@ -1,26 +1,23 @@
-#!/bin/bash
+#!/bin/sh
 
 # Update system packages
 echo "Updating system packages..."
-sudo apt-get update
-sudo apt-get upgrade -y
+sudo apk update
+sudo apk upgrade
 
 # Install basic dependencies and Git
 echo "Installing basic dependencies and Git..."
-sudo apt-get install -y apt-transport-https ca-certificates curl gnupg lsb-release git
+sudo apk add --no-cache ca-certificates curl git
 
 # Install Docker
 echo "Installing Docker..."
-curl -fsSL https://download.docker.com/linux/debian/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
-echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-sudo apt-get update
-sudo apt-get install -y docker-ce docker-ce-cli containerd.io
+sudo apk add --no-cache docker
+sudo rc-update add docker boot
+sudo service docker start
 
-# Configure Docker for the current user and start the service
+# Configure Docker for the current user
 echo "Configuring Docker permissions..."
-sudo usermod -aG docker $USER
-sudo systemctl enable docker
-sudo systemctl start docker
+sudo addgroup $USER docker
 echo "NOTE: You MUST log out and log back in for the docker group permissions to take effect."
 
 # Install kubectl
@@ -31,7 +28,7 @@ rm kubectl
 
 # Install K3d
 echo "Installing K3d..."
-curl -s https://raw.githubusercontent.com/rancher/k3d/main/install.sh | bash
+curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash
 
 # Install Helm
 echo "Installing Helm..."
@@ -39,11 +36,11 @@ curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
 
 # Install necessary utilities
 echo "Installing additional utilities..."
-sudo apt-get install -y jq bash-completion postgresql-client
+sudo apk add --no-cache jq bash bash-completion postgresql-client
 
 # Install for better VM performance
 echo "Installing additional packages for improved performance..."
-sudo apt-get install -y htop net-tools
+sudo apk add --no-cache htop net-tools
 
 echo "All dependencies installed successfully!"
 echo "IMPORTANT: You need to log out and log back in (or restart the VM) for Docker permissions to take effect."

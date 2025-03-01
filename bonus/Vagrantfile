@@ -12,10 +12,7 @@ Vagrant.configure("2") do |config|
   config.vm.network "forwarded_port", guest: 8888, host: 8888
   config.vm.network "forwarded_port", guest: 80, host: 8081
   config.vm.network "forwarded_port", guest: 443, host: 8443
-
   config.vm.network "forwarded_port", guest: 8929, host: 8929
-
-
   
   config.vm.provider "virtualbox" do |vb|
     vb.name = "k3d-gitlab"
@@ -26,10 +23,10 @@ Vagrant.configure("2") do |config|
   config.vm.provision "shell", inline: <<-SHELL
     sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
     
-    useradd -m -s /bin/bash iot
-    
+    adduser -D -s /bin/bash iot
     echo "iot:iot" | chpasswd
     
+    apk add sudo
     echo "iot ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/iot
     chmod 0440 /etc/sudoers.d/iot
     
@@ -39,6 +36,6 @@ Vagrant.configure("2") do |config|
     chmod 700 /home/iot/.ssh
     chmod 600 /home/iot/.ssh/authorized_keys
     
-    systemctl restart sshd
+    rc-service sshd restart
   SHELL
 end
