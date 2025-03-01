@@ -42,7 +42,7 @@ helm repo update
 
 # Install GitLab
 echo "Installing GitLab (this may take several minutes)..."
-helm install gitlab gitlab/gitlab -f /vagrant/bonus/confs/gitlab-values.yaml -n gitlab
+helm install gitlab gitlab/gitlab -f ~/iot/bonus/confs/gitlab-values.yml -n gitlab
 
 # Wait for GitLab to be available (may take up to 10 minutes)
 echo "Waiting for GitLab to become available (this may take up to 10 minutes)..."
@@ -62,7 +62,7 @@ echo "GitLab credentials:"
 echo "  Username: root"
 echo "  Password: $(cat gitlab-password)"
 echo ""
-echo "To access GitLab: http://192.168.56.110:8080"
+echo "To access GitLab: http://192.168.56.111:8080"
 echo "To access Argo CD: https://localhost:8081 (after running port-forward)"
 echo ""
 echo "Run the following to access Argo CD:"

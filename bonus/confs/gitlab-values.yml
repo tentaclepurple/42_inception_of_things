@@ -1,13 +1,14 @@
 global:
   edition: ce
   hosts:
-    domain: 192.168.56.110.nip.io
+    domain: 192.168.56.111.nip.io
     https: false
   ingress:
     configureCertmanager: false
-    class: "traefik"
+    class: "gitlab-nginx"  # Cambiado de "traefik" a "gitlab-nginx"
     enabled: true
-
+    useGlobalIngress: false
+  
 certmanager:
   install: false
 prometheus:

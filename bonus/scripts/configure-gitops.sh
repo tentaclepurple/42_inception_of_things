@@ -3,8 +3,7 @@ set -e
 
 echo "=== CONFIGURING GITOPS WITH GITLAB AND ARGO CD ==="
 
-# Variables (adjust as needed)
-GITLAB_URL="http://192.168.56.110:8080"
+GITLAB_URL="http://192.168.56.111:8080"
 GITLAB_USER="root"
 GITLAB_PASSWORD=$(cat gitlab-password)
 PROJECT_NAME="k8s-app"
