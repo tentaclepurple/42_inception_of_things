@@ -5,8 +5,8 @@ metadata:
   namespace: dev
 spec:
   selector:
-    app: myapp  #  Selector must match with pod label
+    app: myapp
   ports:
-  - port: 8888  # service port
-    targetPort: 8888  # container post
-  type: ClusterIP  # Service type (accessible only inside cluster)
+  - port: 8888
+    targetPort: 8888
+  type: ClusterIP
