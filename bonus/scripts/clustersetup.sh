@@ -47,23 +47,28 @@ helm repo add gitlab https://charts.gitlab.io/
 helm repo update
 
 # Install GitLab with minimal configuration
-echo "Installing GitLab (this may take several minutes)..."
-helm install gitlab gitlab/gitlab \
-  --set global.hosts.domain=192.168.56.110.nip.io \
-  --set global.ingress.class=gitlab-nginx \
-  --set global.ingress.useGlobalIngress=false \
-  --set certmanager.install=false \
-  --set prometheus.install=false \
-  --set gitlab-runner.install=false \
-  --set postgresql.persistence.size=1Gi \
-  --set redis.master.persistence.size=1Gi \
-  --set minio.persistence.size=1Gi \
-  --set global.pages.enabled=false \
-  --set global.kas.enabled=false \
-  --set registry.enabled=false \
-  --set certmanager-issuer.email=admin@example.com \
-  --namespace gitlab \
-  --timeout 15m
+echo "Checking if GitLab is already installed..."
+if ! helm list -n gitlab | grep -q "gitlab"; then
+  echo "Installing GitLab (this may take several minutes)..."
+  helm install gitlab gitlab/gitlab \
+    --set global.hosts.domain=192.168.56.110.nip.io \
+    --set global.ingress.class=gitlab-nginx \
+    --set global.ingress.useGlobalIngress=false \
+    --set certmanager.install=false \
+    --set prometheus.install=false \
+    --set gitlab-runner.install=false \
+    --set postgresql.persistence.size=1Gi \
+    --set redis.master.persistence.size=1Gi \
+    --set minio.persistence.size=1Gi \
+    --set global.pages.enabled=false \
+    --set global.kas.enabled=false \
+    --set registry.enabled=false \
+    --set certmanager-issuer.email=admin@example.com \
+    --namespace gitlab \
+    --timeout 15m
+else
+  echo "GitLab is already installed, skipping installation..."
+fi
 
 # Wait for GitLab to be available (may take up to 10 minutes)
 echo "Waiting for GitLab to become available (this may take up to 10 minutes)..."
