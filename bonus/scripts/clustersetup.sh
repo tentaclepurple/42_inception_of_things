@@ -3,25 +3,31 @@ set -e
 
 echo "=== SETTING UP ENVIRONMENT FOR GITLAB AND ARGO CD ==="
 
-# Create K3d cluster
-echo "Creating K3d cluster for GitLab..."
-k3d cluster create gitlab-cluster \
-  --api-port 6443 \
-  --agents 2 \
-  --port "8080:80@loadbalancer" \
-  --port "8443:443@loadbalancer" \
-  --port "8929:8929@loadbalancer"
+# Create K3d cluster if it doesn't exist
+echo "Checking if cluster exists..."
+if ! k3d cluster list | grep -q "gitlab-cluster"; then
+  echo "Creating K3d cluster for GitLab..."
+  k3d cluster create gitlab-cluster \
+    --api-port 6443 \
+    --agents 2 \
+    --port "8080:80@loadbalancer" \
+    --port "8443:443@loadbalancer" \
+    --port "8929:8929@loadbalancer"
+else
+  echo "Cluster 'gitlab-cluster' already exists, skipping creation..."
+fi
 
 # Configure kubectl
+echo "Configuring kubectl..."
 mkdir -p $HOME/.kube
 k3d kubeconfig get gitlab-cluster > $HOME/.kube/config
 chmod 600 $HOME/.kube/config
 
 # Create namespaces
 echo "Creating required namespaces..."
-kubectl create namespace gitlab
-kubectl create namespace argocd
-kubectl create namespace dev
+kubectl create namespace gitlab --dry-run=client -o yaml | kubectl apply -f -
+kubectl create namespace argocd --dry-run=client -o yaml | kubectl apply -f -
+kubectl create namespace dev --dry-run=client -o yaml | kubectl apply -f -
 
 # Install Argo CD
 echo "Installing Argo CD..."
@@ -40,13 +46,28 @@ echo "Configuring Helm for GitLab..."
 helm repo add gitlab https://charts.gitlab.io/
 helm repo update
 
-# Install GitLab
+# Install GitLab with minimal configuration
 echo "Installing GitLab (this may take several minutes)..."
-helm install gitlab gitlab/gitlab -f ~/iot/bonus/confs/gitlab-values.yml -n gitlab
+helm install gitlab gitlab/gitlab \
+  --set global.hosts.domain=192.168.56.110.nip.io \
+  --set global.ingress.class=gitlab-nginx \
+  --set global.ingress.useGlobalIngress=false \
+  --set certmanager.install=false \
+  --set prometheus.install=false \
+  --set gitlab-runner.install=false \
+  --set postgresql.persistence.size=1Gi \
+  --set redis.master.persistence.size=1Gi \
+  --set minio.persistence.size=1Gi \
+  --set global.pages.enabled=false \
+  --set global.kas.enabled=false \
+  --set registry.enabled=false \
+  --set certmanager-issuer.email=admin@example.com \
+  --namespace gitlab \
+  --timeout 15m
 
 # Wait for GitLab to be available (may take up to 10 minutes)
 echo "Waiting for GitLab to become available (this may take up to 10 minutes)..."
-kubectl wait --for=condition=available deployment/gitlab-webservice-default -n gitlab --timeout=600s
+kubectl wait --for=condition=available deployment/gitlab-webservice-default -n gitlab --timeout=900s
 
 # Get GitLab credentials
 echo "Retrieving GitLab credentials..."
