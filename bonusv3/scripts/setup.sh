@@ -20,6 +20,6 @@ echo "Password"
 cat argopass
 echo " "
 
-echo "ArgoCD interface:  https://192.168.56.111:8080"
+echo "ArgoCD interface:  https://192.168.56.112:8080"
 
 kubectl port-forward --address 0.0.0.0 svc/argocd-server -n argocd 8080:443
