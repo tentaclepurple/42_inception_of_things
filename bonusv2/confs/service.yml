@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-service
+  namespace: gitlab
+spec:
+  selector:
+    app: myapp  #  Selector must match with pod label
+  ports:
+  - port: 8888  # service port
+    targetPort: 8888  # container post
+  type: ClusterIP  # Service type (accessible only inside cluster)

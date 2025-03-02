@@ -1,0 +1,56 @@
+
+Vagrant.configure("2") do |config|
+    config.vm.box = "debian/bullseye64"
+    
+    config.vm.hostname = "bonus"
+    
+    config.vm.network "private_network", ip: "192.168.56.111"
+    
+    # Argo and apps ports
+    config.vm.network "forwarded_port", guest: 8080, host: 8080  # Argo CD
+    config.vm.network "forwarded_port", guest: 8888, host: 8888  # App
+    config.vm.network "forwarded_port", guest: 80, host: 8081    # Ingress
+    
+    # GitLab port
+    config.vm.network "forwarded_port", guest: 9999, host: 9999, protocol: "tcp"
+    
+    config.vm.provider "virtualbox" do |vb|
+      vb.name = "bonus"
+      vb.memory = 6144
+      vb.cpus = 5
+    end
+
+    config.vm.provision "shell", inline: <<-SHELL
+      sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
+      
+      useradd -m -s /bin/bash iot
+      
+      echo "iot:iot" | chpasswd
+      
+      echo "iot ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/iot
+      chmod 0440 /etc/sudoers.d/iot
+      
+      mkdir -p /home/iot/.ssh
+      cp /home/vagrant/.ssh/authorized_keys /home/iot/.ssh/
+      chown -R iot:iot /home/iot/.ssh
+      chmod 700 /home/iot/.ssh
+      chmod 600 /home/iot/.ssh/authorized_keys
+      
+      systemctl restart sshd
+    SHELL
+    
+    # Github install
+    config.vm.provision "shell", path: "scripts/gitlab_setup.sh", env: {"HOST_IP" => "192.168.56.111"}
+
+    config.vm.provision "shell", inline: <<-SHELL
+      echo "====================================="
+      echo "GitLab: http://192.168.56.111:9999"
+      echo ""
+      echo "Continue instalation:"
+      echo "scp -r . iot@192.168.56.111:iot"
+      echo "ssh iot@192.168.56.111"
+      echo "cd /vagrant/scripts"
+      echo "# Run instalation scripts"
+      echo "====================================="
+    SHELL
+  end
