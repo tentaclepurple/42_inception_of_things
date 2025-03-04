@@ -8,7 +8,7 @@ sudo sh -c 'echo "LANG=en_US.UTF-8\nLANGUAGE=en_US.UTF-8\nLC_ALL=en_US.UTF-8\nLC
 echo "export LANGUAGE=en_US.UTF-8\nexport LANG=en_US.UTF-8\nexport LC_ALL=en_US.UTF-8\nexport LC_CTYPE=en_US.UTF-8">>~/.bash_profile
 
 sudo apt-get update -qq >/dev/null
-sudo apt-get install -qq -y vim git wget curl git >/dev/null
+sudo apt-get install -qq -y git wget curl git >/dev/null
 curl -sS https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.deb.sh | sudo bash
 
 sudo apt-get update -qq >/dev/null
