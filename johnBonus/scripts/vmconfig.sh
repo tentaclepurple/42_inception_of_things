@@ -7,7 +7,7 @@ sudo apt-get upgrade -y
 
 # Configure the second network interface
 sudo ip link set eth1 up 2>/dev/null || echo "eth1 already up"
-sudo ip addr add 192.168.56.110/24 dev eth1 2>/dev/null || echo "IP already configured"
+sudo ip addr add 192.168.56.112/24 dev eth1 2>/dev/null || echo "IP already configured"
 
 # Install basic dependencies and Git
 echo "Installing basic dependencies and Git..."
